@@ -1,7 +1,20 @@
 DROP TABLE IF EXISTS products;
+DROP TABLE IF EXISTS users;
 
 CREATE TABLE products (
   id    SERIAL PRIMARY KEY,
   name  VARCHAR(100) NOT NULL,
   price INT          NOT NULL
 );
+
+CREATE TABLE users (
+  id       SERIAL PRIMARY KEY,
+  name     VARCHAR(100) NOT NULL,
+  email    VARCHAR(255) NOT NULL UNIQUE,
+  password VARCHAR(255) NOT NULL
+);
+
+-- サンプルユーザ（パスワードは平文。本番では必ずハッシュ化すること）
+INSERT INTO users (name, email, password) VALUES
+  ('山田太郎', 'taro@example.com', 'password123'),
+  ('鈴木花子', 'hanako@example.com', 'password456');

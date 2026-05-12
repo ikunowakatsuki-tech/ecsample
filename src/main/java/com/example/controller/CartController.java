@@ -28,9 +28,16 @@ public class CartController {
 		this.productMapper = productMapper;
 	}
 
+	/** ログインチェック：未ログインはログインページにリダイレクト */
+	private boolean isLoggedIn(HttpSession session) {
+		return session.getAttribute("loginUser") != null;
+	}
+
 	/** カート一覧を表示する */
 	@GetMapping
 	public String showCart(HttpSession session, Model model) {
+		if (!isLoggedIn(session))
+			return "redirect:/login";
 		List<CartItem> cart = cartService.getCart(session);
 		int total = cart.stream().mapToInt(CartItem::getSubtotal).sum();
 		model.addAttribute("cart", cart);
@@ -42,6 +49,8 @@ public class CartController {
 	@PostMapping("/add")
 	public String addToCart(@RequestParam("productId") int productId,
 			HttpSession session) {
+		if (!isLoggedIn(session))
+			return "redirect:/login";
 		Product product = productMapper.findById(productId);
 		if (product != null) {
 			cartService.addItem(session, product);
@@ -53,6 +62,8 @@ public class CartController {
 	@PostMapping("/remove")
 	public String removeFromCart(@RequestParam("productId") int productId,
 			HttpSession session) {
+		if (!isLoggedIn(session))
+			return "redirect:/login";
 		cartService.removeItem(session, productId);
 		return "redirect:/cart";
 	}
